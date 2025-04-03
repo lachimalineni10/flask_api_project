@@ -1,0 +1,71 @@
+## 1. Introduction to REST APIs
+
+### 1️⃣ Definition
+A REST API (Representational State Transfer API) is a system that allows communication between a
+client (frontend, Postman, mobile app) and a server using HTTP requests.    
+
+### 2️⃣ Explanation
+REST APIs follow a stateless architecture, meaning each request is independent and doesn't store user session data.
+
+They use standard HTTP methods:
+
+- **GET** → Retrieve data
+- **POST** → Create new data
+- **PUT/PATCH** → Update existing data
+- **DELETE** → Remove data
+
+REST APIs return responses in JSON format.
+
+### 📌 Example of a RESTful Request & Response:
+
+#### Client Request (GET)
+```
+GET /users/1 HTTP/1.1  
+Host: example.com  
+```
+
+#### Server Response (JSON)
+```
+{
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com"
+}
+```
+
+### 3️⃣ Examples
+
+#### Basic Flask REST API Example
+Let's create a simple REST API using Flask that returns a JSON response.
+
+#### 📝 Create `app.py`
+```
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/user', methods=['GET'])
+def get_user():
+    return jsonify({"id": 1, "name": "Alice", "email": "alice@example.com"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+#### Run Flask API
+```bash
+python app.py
+```
+
+#### Test in Postman
+✅ **GET** `http://127.0.0.1:5000/user`
+
+💡 **Response:**
+```json
+{
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com"
+}
+```
+
