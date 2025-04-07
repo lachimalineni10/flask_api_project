@@ -1,0 +1,135 @@
+### 3️⃣ Introduction to REST APIs  
+
+#### Definition of REST APIs  
+A REST API (Representational State Transfer API) is a set of rules that allows communication between a client (frontend, mobile app, Postman) and a server using standard HTTP methods.  
+
+#### Explanation of REST APIs  
+- REST APIs use stateless communication, meaning each request from the client contains all the necessary information.  
+- They use standard HTTP methods to perform actions on resources (data).  
+- REST APIs return data in a structured format, usually JSON or XML (JSON is preferred).  
+- They follow a resource-based structure, where URLs represent resources like `/users`, `/products`, etc.  
+
+#### Common HTTP Methods in REST APIs  
+| HTTP Method |            Purpose                |             Example                  |
+|-------------|-----------------------------------|--------------------------------------|
+| GET         | Retrieve data from the server     | `/users` (Get all users)             |
+| POST        | Create a new resource             | `/users` (Create a new user)         |
+| PUT         | Update an existing resource       | `/users/1` (Update user with ID 1)   |
+| PATCH       | Partially update a resource       | `/users/1` (Change only some fields) |
+| DELETE      | Remove a resource from the server | `/users/1` (Delete user with ID 1)   |
+
+---
+### Example: Simple REST API in Flask  
+Modify `app.py` to include multiple RESTful endpoints:
+
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Sample user data
+users = [
+    {"id": 1, "name": "John Doe"},
+    {"id": 2, "name": "Jane Doe"}
+]
+
+# GET: Fetch all users
+@app.route('/users', methods=['GET'])
+def get_users():
+    return jsonify(users)
+
+# POST: Create a new user
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.json  # Get JSON data from request body
+    new_user = {"id": len(users) + 1, "name": data['name']}
+    users.append(new_user)
+    return jsonify(new_user), 201
+
+# PUT: Update a user
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    for user in users:
+        if user["id"] == user_id:
+            user["name"] = request.json["name"]
+            return jsonify(user)
+    return jsonify({"error": "User not found"}), 404
+
+# DELETE: Remove a user
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    global users
+    users = [user for user in users if user["id"] != user_id]
+    return jsonify({"message": "User deleted"}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+#### Explanation of the Example  
+- **GET `/users`** – Returns a list of users.  
+- **POST `/users`** – Accepts JSON data to create a new user and returns the new user with a `201 Created` status.  
+- **PUT `/users/<user_id>`** – Updates the name of a user by ID.  
+- **DELETE `/users/<user_id>`** – Removes a user from the list and returns a success message.  
+
+---
+### Testing REST API in Postman  
+
+#### 1️⃣ GET Request to `/users`  
+- Open Postman and set the method to **GET**.
+- Enter `http://127.0.0.1:5000/users` and click **Send**.
+
+**Expected response:**
+```json
+[
+  {"id": 1, "name": "John Doe"},
+  {"id": 2, "name": "Jane Doe"}
+]
+```
+
+#### 2️⃣ POST Request to `/users`  
+- Set method to **POST** and enter `http://127.0.0.1:5000/users`.
+- Go to **Body → raw → JSON** and add:
+
+```json
+{
+  "name": "Alice"
+}
+```
+- Click **Send**. Expected response:
+
+```json
+{
+  "id": 3,
+  "name": "Alice"
+}
+```
+
+#### 3️⃣ PUT Request to `/users/1`  
+- Set method to **PUT** and enter `http://127.0.0.1:5000/users/1`.
+- Go to **Body → raw → JSON** and modify:
+
+```json
+{
+  "name": "Updated John"
+}
+```
+- Click **Send**. Expected response:
+
+```json
+{
+  "id": 1,
+  "name": "Updated John"
+}
+```
+
+#### 4️⃣ DELETE Request to `/users/2`  
+- Set method to **DELETE** and enter `http://127.0.0.1:5000/users/2`.
+- Click **Send**. Expected response:
+
+```json
+{
+  "message": "User deleted"
+}
+```
+

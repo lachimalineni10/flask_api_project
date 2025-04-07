@@ -1,0 +1,81 @@
+## 2⃣ Creating API Endpoints in Flask
+
+### Definition of API Endpoints
+An API endpoint is a URL (Uniform Resource Locator) where an API can receive requests and send responses. It acts as an entry point for interacting with the server.
+
+### Explanation of API Endpoints in Flask
+- Flask uses the `@app.route()` decorator to define API endpoints.
+- Each endpoint is linked to a function that executes when a request is made.
+- Endpoints can handle different HTTP methods like GET, POST, PUT, DELETE.
+
+### Example: Creating API Endpoints in Flask
+
+#### Step 1: Create `app.py` and Add Endpoints
+Modify your `app.py` to define multiple endpoints:
+
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+# Home route
+@app.route('/')
+def home():
+    return "Welcome to Flask API!"
+
+# GET request example
+@app.route('/user', methods=['GET'])
+def get_user():
+    user = {"id": 1, "name": "John Doe"}
+    return jsonify(user)
+
+# POST request example
+@app.route('/user', methods=['POST'])
+def create_user():
+    return jsonify({"message": "User created successfully!"}), 201
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+### Explanation of the Example
+- `@app.route('/')` – Defines the home endpoint (`/`), which returns a simple text response.
+- `@app.route('/user', methods=['GET'])` – This endpoint returns a JSON response with a user's data.
+- `@app.route('/user', methods=['POST'])` – This endpoint simulates creating a user and returns a success message with status `201 (Created)`.
+
+#### Step 2: Running the Flask Server
+Run the Flask app:
+
+```bash
+python app.py
+```
+
+You will see output like:
+
+```nginx
+Running on http://127.0.0.1:5000/
+```
+
+#### Step 3: Testing in Postman
+
+**GET Request:**
+- Set method to **GET** and enter `http://127.0.0.1:5000/user`.
+- Click **Send**, and you should receive:
+
+```json
+{
+  "id": 1,
+  "name": "John Doe"
+}
+```
+
+**POST Request:**
+- Set method to **POST** and enter `http://127.0.0.1:5000/user`.
+- Click **Send**, and you should receive:
+
+```json
+{
+  "message": "User created successfully!"
+}
+```
+

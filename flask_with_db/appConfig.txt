@@ -1,0 +1,75 @@
+## What is `app.config`?
+
+### Definition
+`app.config` is a dictionary-like object in Flask that stores configuration settings for the Flask application. 
+It allows you to set various options such as database connections, debugging mode, secret keys, and more.
+
+### Explanation
+In Flask, the `app` object (created using `Flask(__name__)`) has a built-in `config` attribute that holds all
+ configuration settings. You can access and modify these settings using dictionary-style syntax.
+
+---
+
+## Examples of `app.config` Usage
+
+### 1️⃣ Setting Configuration Values
+You can set configuration options using key-value pairs:
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+# Setting configuration values
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
+
+print(app.config['DEBUG'])  # Output: True
+print(app.config['SECRET_KEY'])  # Output: mysecretkey
+```
+
+---
+
+### 2️⃣ Common Configuration Options
+
+| Configuration Key                | Purpose                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------|
+| `DEBUG`                          | Enables or disables debug mode (`True/False`)                                 |
+| `TESTING`                        | Enables testing mode for the app (`True/False`)                               |
+| `SECRET_KEY`                     | A secret key used for security (e.g., session management, CSRF protection)    |
+| `SQLALCHEMY_DATABASE_URI`        | Specifies the database connection string                                      |
+| `SQLALCHEMY_TRACK_MODIFICATIONS` | Enables/disables modification tracking for SQLAlchemy (`False` is recommended
+                                   |                                                               to save memory) |
+| `SESSION_COOKIE_NAME`            | Sets the name of the session cookie                                           |
+| `JSON_SORT_KEYS`                 | Controls whether JSON responses should be sorted (`True/False`)               |
+
+---
+
+### 3️⃣ Loading Configuration from a File
+Instead of hardcoding settings, you can load them from a file:
+
+```python
+app.config.from_pyfile('config.py')
+```
+
+Example `config.py` file:
+
+```python
+DEBUG = True
+SECRET_KEY = 'supersecretkey'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///mydatabase.db'
+```
+
+This keeps your main Flask code clean and separates configuration settings.
+
+---
+
+## Why Use `app.config`?
+✅ Keeps configuration settings organized and manageable  
+✅ Allows dynamic changes without modifying the main code  
+✅ Supports loading settings from environment variables or files  
+✅ Enhances security (e.g., storing secret keys securely)  
+
+---
+

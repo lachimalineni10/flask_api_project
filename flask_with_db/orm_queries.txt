@@ -1,0 +1,157 @@
+✅ 1. Retrieve All Users  
+**ORM:**
+```python
+users = User.query.all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users;
+```
+
+✅ 2. Retrieve One User by ID  
+**ORM:**
+```python
+user = User.query.get(1)
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users WHERE id = 1;
+```
+
+✅ 3. Filter Users by a Condition  
+**ORM:**
+```python
+users = User.query.filter_by(name="John").all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users WHERE name = 'John';
+```
+
+**Advanced filter (age > 25):**
+```python
+users = User.query.filter(User.age > 25).all()
+```
+```sql
+SELECT * FROM users WHERE age > 25;
+```
+
+**Multiple conditions:**
+```python
+users = User.query.filter(User.age > 25, User.name == "John").all()
+```
+```sql
+SELECT * FROM users WHERE age > 25 AND name = 'John';
+```
+
+**Using OR condition:**
+```python
+from sqlalchemy import or_
+users = User.query.filter(or_(User.age < 20, User.email.like('%gmail.com'))).all()
+```
+```sql
+SELECT * FROM users WHERE age < 20 OR email LIKE '%gmail.com';
+```
+
+✅ 4. Update a User  
+**ORM:**
+```python
+user = User.query.get(1)
+user.name = "Updated Name"
+db.session.commit()
+```
+**Raw SQL:**
+```sql
+UPDATE users SET name = 'Updated Name' WHERE id = 1;
+```
+
+✅ 5. Delete a User  
+**ORM:**
+```python
+user = User.query.get(1)
+db.session.delete(user)
+db.session.commit()
+```
+**Raw SQL:**
+```sql
+DELETE FROM users WHERE id = 1;
+```
+
+✅ 6. BETWEEN and LIKE  
+**ORM:**
+```python
+User.query.filter(User.age.between(20, 30)).all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users WHERE age BETWEEN 20 AND 30;
+```
+
+**ORM:**
+```python
+User.query.filter(User.name.ilike('%john%')).all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users WHERE LOWER(name) LIKE '%john%';
+```
+
+✅ 7. Ordering Results  
+**ORM:**
+```python
+User.query.order_by(User.age.desc()).all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users ORDER BY age DESC;
+```
+
+✅ 8. LIMIT and OFFSET  
+**ORM:**
+```python
+User.query.limit(5).all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users LIMIT 5;
+```
+
+**ORM:**
+```python
+User.query.offset(5).limit(5).all()
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users OFFSET 5 LIMIT 5;
+```
+
+✅ 9. Join Queries  
+Let's say we have this schema:
+```sql
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(200),
+    user_id INTEGER REFERENCES users(id)
+);
+```
+**ORM:**
+```python
+db.session.query(Post, User).join(User).all()
+```
+**Raw SQL:**
+```sql
+SELECT posts.*, users.* FROM posts
+JOIN users ON posts.user_id = users.id;
+```
+
+✅ 10. Raw SQL Execution in SQLAlchemy  
+**ORM:**
+```python
+from sqlalchemy import text
+result = db.session.execute(text("SELECT * FROM users WHERE age > :age"), {"age": 25})
+```
+**Raw SQL:**
+```sql
+SELECT * FROM users WHERE age > 25;
+```
+

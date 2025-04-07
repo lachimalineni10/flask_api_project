@@ -1,0 +1,214 @@
+5⃣ Building a CRUD API in Flask
+
+### Definition of CRUD
+CRUD stands for **Create, Read, Update, and Delete** — the four basic operations performed on data in an API. A CRUD API allows clients (frontend applications, mobile apps, or Postman) to interact with a database or in-memory data storage.
+
+### Explanation of CRUD Operations
+| CRUD Operation | HTTP Method | Description                |
+|----------------|-------------|----------------------------|
+| Create         | POST        | Adds a new record          |
+| Read           | GET         | Retrieves records          |
+| Update         | PUT/PATCH   | Modifies an existing record|
+| Delete         | DELETE      | Removes a record           |
+
+In this section, we will build a CRUD API using Flask with a simple in-memory database (Python dictionary). Later, we will replace this with a real database (SQLite/PostgreSQL) using SQLAlchemy.
+
+---
+
+## 1⃣ Setting Up the Flask App
+### Create a file called `app.py` and add the following code:
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# In-memory database (Dictionary)
+users = {}
+```
+
+---
+
+## 2⃣ Create Operation (POST)
+### Example: Add a New User
+```python
+@app.route('/user', methods=['POST'])
+def create_user():
+    data = request.json  # Extract JSON data
+    if 'id' not in data or 'name' not in data:
+        return jsonify({"error": "ID and name are required"}), 400
+
+    user_id = data['id']
+    if user_id in users:
+        return jsonify({"error": "User already exists"}), 400
+
+    users[user_id] = data['name']
+    return jsonify({"message": f"User {data['name']} created successfully!"}), 201
+```
+### Testing in Postman
+- **Method:** POST  
+- **URL:** `http://127.0.0.1:5000/user`  
+- **Body (raw, JSON):**
+```json
+{
+  "id": 1,
+  "name": "Alice"
+}
+```
+### Expected Response:
+```json
+{
+  "message": "User Alice created successfully!"
+}
+```
+
+---
+
+## 3⃣ Read Operation (GET)
+### Example: Get a User by ID
+```python
+@app.route('/user', methods=['GET'])
+def get_user():
+    user_id = request.args.get('id')  # Extract query parameter
+    if not user_id or int(user_id) not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({"id": int(user_id), "name": users[int(user_id)]})
+```
+### Testing in Postman
+- **Method:** GET  
+- **URL:** `http://127.0.0.1:5000/user?id=1`  
+### Expected Response:
+```json
+{
+  "id": 1,
+  "name": "Alice"
+}
+```
+
+---
+
+## 4⃣ Update Operation (PUT)
+### Example: Update an Existing User
+```python
+@app.route('/user', methods=['PUT'])
+def update_user():
+    data = request.json  # Extract JSON data
+    if 'id' not in data or 'name' not in data:
+        return jsonify({"error": "ID and name are required"}), 400
+
+    user_id = data['id']
+    if user_id not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    users[user_id] = data['name']
+    return jsonify({"message": f"User {user_id} updated to {data['name']}!"})
+```
+### Testing in Postman
+- **Method:** PUT  
+- **URL:** `http://127.0.0.1:5000/user`  
+- **Body (raw, JSON):**
+```json
+{
+  "id": 1,
+  "name": "Bob"
+}
+```
+### Expected Response:
+```json
+{
+  "message": "User 1 updated to Bob!"
+}
+```
+
+---
+
+## 5⃣ Delete Operation (DELETE)
+### Example: Delete a User
+```python
+@app.route('/user', methods=['DELETE'])
+def delete_user():
+    user_id = request.args.get('id')  # Extract query parameter
+    if not user_id or int(user_id) not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    del users[int(user_id)]
+    return jsonify({"message": f"User {user_id} deleted successfully!"})
+```
+### Testing in Postman
+- **Method:** DELETE  
+- **URL:** `http://127.0.0.1:5000/user?id=1`  
+### Expected Response:
+```json
+{
+  "message": "User 1 deleted successfully!"
+}
+```
+
+---
+
+## Final Code for `app.py`
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# In-memory database
+users = {}
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    data = request.json
+    if 'id' not in data or 'name' not in data:
+        return jsonify({"error": "ID and name are required"}), 400
+
+    user_id = data['id']
+    if user_id in users:
+        return jsonify({"error": "User already exists"}), 400
+
+    users[user_id] = data['name']
+    return jsonify({"message": f"User {data['name']} created successfully!"}), 201
+
+@app.route('/user', methods=['GET'])
+def get_user():
+    user_id = request.args.get('id')
+    if not user_id or int(user_id) not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({"id": int(user_id), "name": users[int(user_id)]})
+
+@app.route('/user', methods=['PUT'])
+def update_user():
+    data = request.json
+    if 'id' not in data or 'name' not in data:
+        return jsonify({"error": "ID and name are required"}), 400
+
+    user_id = data['id']
+    if user_id not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    users[user_id] = data['name']
+    return jsonify({"message": f"User {user_id} updated to {data['name']}!"})
+
+@app.route('/user', methods=['DELETE'])
+def delete_user():
+    user_id = request.args.get('id')
+    if not user_id or int(user_id) not in users:
+        return jsonify({"error": "User not found"}), 404
+
+    del users[int(user_id)]
+    return jsonify({"message": f"User {user_id} deleted successfully!"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+---
+
+## Summary of CRUD Operations
+| CRUD Operation | HTTP Method | Example Request |
+|----------------|-------------|----------------|
+| Create         | POST        | `{ "id": 1, "name": "Alice" }` |
+| Read           | GET         | `/user?id=1` |
+| Update         | PUT         | `{ "id": 1, "name": "Bob" }` |
+| Delete         | DELETE      | `/user?id=1` |
+

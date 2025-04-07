@@ -1,0 +1,21 @@
+Yes, whenever you use db.session outside a Flask route or function, you must use app.app_context().
+
+🔍 Why Do We Need app.app_context()?
+Flask uses an application context to manage things like:
+-The current app instance (app)
+-The database session (db.session)
+-When Flask starts, it doesn’t automatically create an application context.
+-Inside a route, Flask automatically manages the context.
+-Outside a route, you must manually create an application context using app.app_context().
+
+✅ Correct Usage (Outside a Function)
+
+# Create an application context before using db.session
+with app.app_context():
+    db.session.execute(text('SELECT 1'))  # ✅ This works
+    print("Database connection successful!")
+
+❌ Incorrect Usage (Without app.app_context())
+
+# This will throw an error!
+db.session.execute(text('SELECT 1')) 

@@ -1,0 +1,165 @@
+## 1️⃣ Setting Up Flask
+
+### Definition of Flask
+Flask is a lightweight and flexible Python web framework used to build web applications and APIs. 
+It is designed to be simple, minimal, and easy to extend, making it an excellent choice for both beginners
+and experienced developers.
+
+### Explanation of Flask
+Flask is a microframework, meaning it provides only the essential tools to build a web application.
+
+- It follows the WSGI (Web Server Gateway Interface) standard and uses the Jinja2 templating engine.
+- Unlike Django, Flask does not include built-in ORM, authentication, or admin panels, but you can add them using
+ extensions.
+
+### Uses of Flask
+- Building REST APIs for web and mobile applications.
+- Creating small to medium-sized web applications.
+- Prototyping ML/AI models as web services.
+- Serving backend logic for web-based dashboards.
+
+### Examples of Applications Built with Flask
+- Web dashboards for data visualization.
+- Backend for IoT devices.
+- RESTful APIs for e-commerce applications.
+- Chatbots and automation services.
+
+---
+
+## Installing Flask
+
+### Step 1: Create a Virtual Environment (Recommended)
+A virtual environment helps isolate dependencies, preventing conflicts with system-wide Python packages.
+
+Run the following command to create and activate a virtual environment:
+
+#### On Windows (PowerShell):
+```powershell
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### On macOS/Linux (Terminal):
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Once activated, you will see `(venv)` before your terminal prompt, indicating the virtual environment is active.
+
+### Step 2: Install Flask
+Run the following command inside the virtual environment:
+```bash
+pip install flask
+```
+
+This will install Flask and its dependencies. You can verify the installation using:
+```bash
+python -m flask --version
+```
+
+### Step 3: Creating a Simple Flask App
+Create a new Python file called `app.py` and add the following code:
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello, Flask!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+### Explanation of the Code:
+- **Import Flask** – The `Flask` class is imported.
+- **Create an App Instance** – `Flask(__name__)` creates an instance of the Flask application.
+- **Define a Route (`@app.route('/')`)** – The `home()` function runs when someone accesses the root URL (`/`).
+- **Run the App (`app.run(debug=True)`)** – This starts the Flask development server in debug mode.
+
+### Step 4: Running the Flask Server
+Save the file and run the command:
+```bash
+python app.py
+```
+
+You should see output like:
+```nginx
+Running on http://127.0.0.1:5000/
+```
+
+Open your browser and visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/) to see "Hello, Flask!" displayed.
+
+
+
+Flask API Development and Postman Testing Syllabus
+1️⃣ Setting Up Flask
+
+Installing Flask (pip install flask)
+Creating a simple Flask app
+Running the Flask server
+
+2️⃣ Creating API Endpoints in Flask
+
+Defining routes with @app.route()
+Handling different HTTP methods
+Returning JSON responses using Flask jsonify
+
+3️⃣ Introduction to REST APIs
+
+What are RESTful APIs?
+HTTP Methods (GET, POST, PUT, DELETE, PATCH)
+Request and Response Format (JSON)
+
+4️⃣ Handling Request Data
+
+Handling query parameters (request.args)
+Handling JSON request body (request.json)
+Handling form data (request.form)
+
+5️⃣ Building a CRUD API
+
+Setting up a basic in-memory database (Python dictionary)
+Implementing:
+
+Create (POST)
+Read (GET)
+Update (PUT/PATCH)
+Delete (DELETE)
+
+6️⃣ Using Flask with a Database (ORM)
+
+Introduction to SQLite/PostgreSQL with Flask
+Installing and setting up Flask-SQLAlchemy
+Defining models (tables) using Python classes
+Performing CRUD operations with SQLAlchemy
+Relationships between tables (One-to-Many, Many-to-Many)
+Querying the database with SQLAlchemy
+Migrations using Flask-Migrate
+
+7️⃣ Error Handling & Response Codes
+
+Using appropriate HTTP status codes
+Handling errors with abort() and try-except
+Custom error messages
+
+8️⃣ Middleware & Authentication
+
+Adding middleware for logging requests
+Implementing authentication (Basic Auth, JWT with Flask-JWT-Extended)
+Securing API endpoints
+
+9️⃣ Testing APIs with Postman
+
+Sending GET, POST, PUT, DELETE requests
+Using environment variables in Postman
+Automating API testing with Postman collections
+
+🔟 Deploying Flask API
+
+Running Flask in production with Gunicorn
+Deploying on a cloud platform (Heroku, AWS, or Render)
+Using Docker to containerize your API

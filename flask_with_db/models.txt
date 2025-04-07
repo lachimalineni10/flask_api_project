@@ -1,0 +1,164 @@
+Defining Tables (Models) Using SQLAlchemy in Flask
+
+## 1️⃣ Definition of SQLAlchemy Models
+A model in SQLAlchemy is a Python class that represents a table in the database. 
+Each attribute in the class represents a column in the table. SQLAlchemy allows us to define relationships between 
+tables and perform database operations using Python code instead of raw SQL queries.
+
+## 2️⃣ Why Use Models Instead of Raw SQL?
+✅ **Object-Oriented Approach**: Treats database tables as Python classes.  
+✅ **Easier Maintenance**: Changes in the schema can be made in Python.  
+✅ **Cross-Database Compatibility**: Works with different databases (PostgreSQL, MySQL, SQLite).  
+✅ **Prevents SQL Injection**: ORM handles queries securely.  
+
+## 3️⃣ Steps to Define Models Using SQLAlchemy
+We will:
+- Set up the database and configure SQLAlchemy
+- Create a model (table) using a Python class
+- Apply migrations to create the table in PostgreSQL
+- Test the model by inserting and querying data
+
+### Step 1: Import Required Modules
+In your `app.py`, add:
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+```
+✅ Flask → Creates the web application.  
+✅ SQLAlchemy → ORM to interact with PostgreSQL.  
+
+### Step 2: Configure the Database
+```python
+app = Flask(__name__)
+
+# PostgreSQL Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost:5432/database_name'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)  # Initialize database connection
+```
+✅ `SQLALCHEMY_DATABASE_URI` → Connection string (change username, password, and database_name).  
+✅ `SQLALCHEMY_TRACK_MODIFICATIONS` → Disables modification tracking (to save memory).  
+✅ `db = SQLAlchemy(app)` → Initializes the ORM.  
+
+### Step 3: Create a Model (Table)
+Now, we define a `User` table in our database.
+```python
+class User(db.Model):  # Inherit from db.Model
+    __tablename__ = 'users'  # Define table name
+
+    id = db.Column(db.Integer, primary_key=True)  # Primary key column
+    name = db.Column(db.String(100), nullable=False)  # Name column
+    email = db.Column(db.String(120), unique=True, nullable=False)  # Unique email column
+    age = db.Column(db.Integer)  # Optional age column
+
+    def __repr__(self):  # String representation for debugging
+        return f'<User {self.name}>'
+```
+✅ `__tablename__ = 'users'` → Sets the table name in PostgreSQL.  
+✅ `id = db.Column(db.Integer, primary_key=True)` → Unique identifier for each user.  
+✅ `name = db.Column(db.String(100), nullable=False)` → Name (max 100 characters, required).  
+✅ `email = db.Column(db.String(120), unique=True, nullable=False)` → Unique email, required.  
+✅ `age = db.Column(db.Integer)` → Optional age column.  
+✅ `def __repr__(self):` → Helps in debugging by showing user details.  
+
+### Step 4: Create the Database Tables
+Before running our Flask app, we need to create the tables in PostgreSQL.
+
+Add this at the bottom of `app.py`:
+```python
+with app.app_context():
+    db.create_all()  # Creates all tables in the database
+```
+✅ `db.create_all()` → Automatically creates all tables based on defined models.
+
+Now, run the script:
+```bash
+python app.py
+```
+If successful, a `users` table is created in PostgreSQL.
+
+### Step 5: Insert and Query Data
+#### Insert a User
+In `app.py`, create a new route:
+```python
+@app.route('/add_user')
+def add_user():
+    new_user = User(name="John Doe", email="john@example.com", age=30)
+    db.session.add(new_user)  # Add user to session
+    db.session.commit()  # Save to database
+    return "User added!"
+```
+✅ `db.session.add(new_user)` → Adds new user to session.  
+✅ `db.session.commit()` → Saves changes to database.  
+
+#### Query Users
+Add another route to fetch users:
+```python
+@app.route('/users')
+def get_users():
+    users = User.query.all()  # Fetch all users
+    return { "users": [{ "id": u.id, "name": u.name, "email": u.email, "age": u.age } for u in users] }
+```
+✅ `User.query.all()` → Fetches all users from the table.  
+✅ Returns data in JSON format.  
+
+## 6️⃣ Full Code: `app.py`
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+
+# PostgreSQL Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost:5432/database_name'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Define the User model
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    age = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f'<User {self.name}>'
+
+# Create tables
+with app.app_context():
+    db.create_all()
+
+@app.route('/')
+def home():
+    return "Flask with PostgreSQL is set up!"
+
+@app.route('/add_user')
+def add_user():
+    new_user = User(name="John Doe", email="john@example.com", age=30)
+    db.session.add(new_user)
+    db.session.commit()
+    return "User added!"
+
+@app.route('/users')
+def get_users():
+    users = User.query.all()
+    return { "users": [{ "id": u.id, "name": u.name, "email": u.email, "age": u.age } for u in users] }
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+## 7️⃣ Running and Testing the App
+1️⃣ Start PostgreSQL and make sure the database exists.  
+2️⃣ Run the Flask app:
+```bash
+python app.py
+```
+3️⃣ Open a browser and visit:
+- [http://127.0.0.1:5000/add_user](http://127.0.0.1:5000/add_user) → Adds a user  
+- [http://127.0.0.1:5000/users](http://127.0.0.1:5000/users) → Fetches all users  
+

@@ -1,0 +1,122 @@
+4️⃣ Handling Request Data in Flask
+
+**Definition of Request Data**
+Request data refers to the information sent by a client (frontend, Postman, mobile app) to the server when making an API request. This data can be passed in different ways, such as query parameters, JSON body, or form data.
+
+**Explanation of Handling Request Data in Flask**
+Flask provides the `request` object from `flask` to access data sent by the client. It can be extracted in three main ways:
+
+- **Query Parameters (`request.args`)** – Data passed in the URL.
+- **JSON Request Body (`request.json`)** – Data sent in the request body (mostly in POST/PUT requests).
+- **Form Data (`request.form`)** – Data sent from HTML forms (used in traditional web apps).
+
+---
+
+### 1️⃣ Handling Query Parameters (`request.args`)
+Query parameters are sent in the URL like this:
+```bash
+http://127.0.0.1:5000/user?id=1
+```
+
+#### Example: Extracting Query Parameters
+Modify your `app.py`:
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Handling Query Parameters
+@app.route('/user', methods=['GET'])
+def get_user():
+    user_id = request.args.get('id')  # Get the 'id' parameter from URL
+    if user_id:
+        return jsonify({"message": f"User ID received: {user_id}"})
+    return jsonify({"error": "No ID provided"}), 400
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+#### Testing in Postman
+- **Set Method:** GET  
+- **URL:** `http://127.0.0.1:5000/user?id=1`
+
+**Expected Response:**
+```json
+{
+  "message": "User ID received: 1"
+}
+```
+
+---
+
+### 2️⃣ Handling JSON Request Body (`request.json`)
+JSON data is typically sent in POST, PUT, and PATCH requests.
+
+#### Example: Extracting JSON Data
+Modify `app.py`:
+```python
+@app.route('/user', methods=['POST'])
+def create_user():
+    data = request.json  # Get JSON data from request body
+    if not data or 'name' not in data:
+        return jsonify({"error": "Name is required"}), 400
+    return jsonify({"message": f"User {data['name']} created successfully!"}), 201
+```
+
+#### Testing in Postman
+- **Set Method:** POST  
+- **URL:** `http://127.0.0.1:5000/user`
+- **Go to:** Body → raw → JSON, then enter:
+```json
+{
+  "name": "Alice"
+}
+```
+- Click **Send**
+
+**Expected Response:**
+```json
+{
+  "message": "User Alice created successfully!"
+}
+```
+
+---
+
+### 3️⃣ Handling Form Data (`request.form`)
+Form data is typically used in web applications where HTML forms send data via POST requests.
+
+#### Example: Extracting Form Data
+Modify `app.py`:
+```python
+@app.route('/submit', methods=['POST'])
+def submit_form():
+    name = request.form.get('name')  # Extract 'name' from form data
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
+    return jsonify({"message": f"Form submitted with name: {name}"})
+```
+
+#### Testing in Postman
+- **Set Method:** POST  
+- **URL:** `http://127.0.0.1:5000/submit`
+- **Go to:** Body → x-www-form-urlencoded  
+- **Add Key:** `name`, **Value:** `Alice`
+- Click **Send**
+
+**Expected Response:**
+```json
+{
+  "message": "Form submitted with name: Alice"
+}
+```
+
+---
+
+### Summary
+| Request Type  | Flask Code                         | Example Request               |
+|---------------|---------------------------------|------------------------------|
+| Query Params  | `request.args.get('id')`       | `/user?id=1`                 |
+| JSON Body     | `request.json`                 | `{ "name": "Alice" }` (POST) |
+| Form Data     | `request.form.get('name')`     | `name=Alice` (POST)          |
