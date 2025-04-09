@@ -75,11 +75,14 @@ def add_or_update_user():
     return jsonify({"message": "user added", "user":{"id":user.id,"name":user.name,"email":user.email,"mobile":user.mobile,"age":user.age}}), 201
 
 @app.route('/get_all_users', methods=["GET"])
-def get_users():
+def get_users():    
     users = Users.query.all()
     return jsonify({"users":[{"id":user.id,"name":user.name,"email":user.email,"age":user.age,"mobile":user.mobile,"age":user.age} for user in users]})
 
 @app.route('/get_user_by_id', methods=["GET"])
+
+@app.route():
+
 def get_user_by_id():
     user_id = request.args.get('id')
     if not user_id:

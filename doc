@@ -132,13 +132,15 @@ Delete (DELETE)
 
 6️⃣ Using Flask with a Database (ORM)
 
-Introduction to SQLite/PostgreSQL with Flask
-Installing and setting up Flask-SQLAlchemy
-Defining models (tables) using Python classes
-Performing CRUD operations with SQLAlchemy
-Relationships between tables (One-to-Many, Many-to-Many)
-Querying the database with SQLAlchemy
-Migrations using Flask-Migrate
+-Introduction to SQLite/PostgreSQL with Flask
+-Installing and setting up Flask-SQLAlchemy
+-Defining models (tables) using Python classes
+-Performing CRUD operations with SQLAlchemy
+    ➤ Uploading data to the database using Excel (.xlsx) ✅
+    ➤ Exporting data from the database to Excel (.xlsx) ✅
+-Relationships between tables (One-to-Many, Many-to-Many)
+-Querying the database with SQLAlchemy
+-Migrations using Flask-Migrate
 
 7️⃣ Error Handling & Response Codes
 
