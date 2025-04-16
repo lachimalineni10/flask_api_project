@@ -36,7 +36,9 @@ def upload_users():
         file.save(filepath)
 
         success_count, reject_count,row_number = 0
-        reject_reason = ""
+        response['success_count'] = success_count
+        response['rejected_count'] = reject_count
+        response['rejected_row'] = ''
         df = pd.read_excel(filepath)
         for row in df.iterrows():
             row_number += 1
@@ -49,8 +51,9 @@ def upload_users():
                 db.rollback()
                 reject_count += 1
                 response['row_number'] = row_number
-                response['rejected _reason'] = e
-        response
+                response['rejected_reason'] = e
+        response['success_count'] = success_count
+        response['rejected_count'] = reject_count
 
     return request.files
 
